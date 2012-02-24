@@ -100,6 +100,7 @@ class Runner(object):
            cmd = self._command(outpath)
            result = self._exec_command(conn, cmd)
            result = json.loads(result)
+           self._exec_command(conn, "rm -f %s" % outpath)
        else:
            ftp = conn.open_sftp()
            ftp.put(self.module_args[0], self.module_args[1])
@@ -117,9 +118,13 @@ class Runner(object):
        results = stdout.read()
        return results
 
+   def _get_tmp_path(self, conn, file_name):
+       output = self._exec_command(conn, "mktemp /tmp/%s.XXXXXX" % file_name)
+       return output.split("\n")[0]
+
    def _copy_module(self, conn):
        inpath = os.path.expanduser(os.path.join(self.module_path, self.module_name))
-       outpath = os.path.join("/var/spool/", "ansible_%s" % self.module_name)
+       outpath = self._get_tmp_path(conn, "ansible_%s" % self.module_name)
        ftp = conn.open_sftp()
        ftp.put(inpath, outpath)
        ftp.close()
