@@ -37,6 +37,7 @@ DEFAULT_MODULE_NAME    = 'ping'
 DEFAULT_PATTERN        = '*'
 DEFAULT_FORKS          = 3
 DEFAULT_MODULE_ARGS    = ''
+DEFAULT_USER           = 'root'
 
 class Pooler(object):
 
@@ -61,7 +62,7 @@ class Runner(object):
 
    def __init__(self, host_list=[], module_path=None,
        module_name=None, module_args=[], 
-       forks=3, timeout=60, pattern='*'):
+       forks=3, timeout=60, pattern='*', user=None):
 
        self.host_list   = host_list
        self.module_path = module_path
@@ -70,7 +71,7 @@ class Runner(object):
        self.pattern     = pattern
        self.module_args = module_args
        self.timeout     = timeout
- 
+       self.user        = user
 
    def _matches(self, host_name):
        if host_name == '':
@@ -83,7 +84,7 @@ class Runner(object):
        ssh = paramiko.SSHClient()
        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
        try:
-          ssh.connect(host, username='root',
+          ssh.connect(host, username=self.user,
               allow_agent=True, look_for_keys=True)
           return ssh
        except:
@@ -150,7 +151,8 @@ if __name__ == '__main__':
        module_name='ping',
        module_args='',
        pattern='*',
-       forks=3
+       forks=3,
+       user='root'
     )   
     print r.run()
 

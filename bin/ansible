@@ -32,6 +32,7 @@ DEFAULT_MODULE_NAME    = 'ping'
 DEFAULT_PATTERN        = '*'
 DEFAULT_FORKS          = 3
 DEFAULT_MODULE_ARGS    = ''
+DEFAULT_USER           = 'root'
 
 class Cli(object):
 
@@ -52,6 +53,8 @@ class Cli(object):
             help="module arguments", default=DEFAULT_MODULE_ARGS)
         parser.add_option("-p", "--pattern", dest="pattern",
             help="hostname pattern", default=DEFAULT_PATTERN)
+        parser.add_option("-u", "--user", dest="user",
+            help="User to log in as", default=DEFAULT_USER)
 
         options, args = parser.parse_args()
         host_list      = self._host_list(options.host_list)
@@ -66,6 +69,7 @@ class Cli(object):
             host_list=host_list,
             forks=options.forks,
             pattern=options.pattern,
+            user=options.user
         )
 
     def _host_list(self, host_list):
